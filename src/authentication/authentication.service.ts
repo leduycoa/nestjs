@@ -1,11 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import UsersService from '../users/users.service';
+import UsersService from '../users/user.service';
 import RegisterDto from './dto/register.dto';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import TokenPayload from '../interfaces/tonken.interface';
-import BranchService from 'src/branch/branch.sevice';
 
 @Injectable()
 export class AuthenticationService {
@@ -21,8 +20,6 @@ export class AuthenticationService {
       const createdUser = await this.usersService.create({
         ...registrationData,
         password: hashedPassword,
-        role: 'manager',
-        gender: 'male',
         address: '',
       });
       return createdUser;

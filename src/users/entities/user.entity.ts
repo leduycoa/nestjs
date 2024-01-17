@@ -6,48 +6,68 @@ import {
   UpdateDateColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
-import { Roles, Gender } from '../user.type';
 import BuildUser from '../../interfaces/user.interface';
-import Branch from '../../branch/entities/branch.entity';
-import PcUsage from '../../pcUsage/entities/pcUsage.entity';
 import * as bcrypt from 'bcrypt';
 import { Exclude } from 'class-transformer';
-import { IsUUID, isUUID } from 'class-validator';
+import { userGenders, userTypes, userStatus } from '../constants/user.constant'
+import Contract from '../..//contracts/entities/contract.entity';
 
 @Entity()
 export class User implements BuildUser {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({
+    type: 'varchar',
+    length: 50,
+    unique: true,
+  })
+  username: string;
+
   @Column()
-  name: string;
+  firstName: string;
+
+  @Column()
+  lastName: string;
 
   @Column({
+    type: 'varchar',
+    length: 50,
     unique: true,
   })
   email: string;
 
-  @Column()
   @Exclude()
+  @Column()
   password: string;
 
   @Column({
-    default: 'intern' as Roles,
+    type: 'enum',
+    enum: userTypes,
+    default: userTypes.INTERNAL
   })
-  role: Roles;
+  userType: string;
 
   @Column({
-    default: 'none' as Gender,
+    type: 'enum',
+    enum: userStatus,
+    default: userStatus.ACTIVE
   })
-  gender: Gender;
-
-  @Column({ nullable: true })
-  address: string;
-
+  status: string;
+  
   @Column()
-  @IsUUID('all')
-  branchId: string;
+  phone: string;
+
+  @Column({
+    type: 'enum',
+    enum: userGenders,
+  })
+  gender: string;
+  
+  @OneToOne(() => Contract, (contract) => contract.userId)
+  contract: Contract;
 
   @Column()
   @CreateDateColumn()
@@ -58,13 +78,6 @@ export class User implements BuildUser {
   @UpdateDateColumn()
   @Exclude()
   updated_at: Date;
-
-  @ManyToOne(() => Branch, (branch) => branch.manager)
-  @ManyToOne(() => Branch, (branch) => branch.staff)
-  branch: Branch;
-
-  @OneToMany(() => PcUsage, (pcUsage) => pcUsage.user)
-  pcUsage: PcUsage[];
 
   isPasswordMatching(unencryptedPassword: string) {
     return bcrypt.compareSync(unencryptedPassword, this.password);

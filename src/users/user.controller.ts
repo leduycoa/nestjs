@@ -9,7 +9,7 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
-import UsersService from './users.service';
+import UserService from './user.service';
 
 import JwtAuthenticationGuard from '../guards/jwt-authentication.guard';
 import { ExceptionsLoggerFilter } from 'src/utils/exceptionsLogger.filter';
@@ -18,23 +18,23 @@ import CreateUserDto from './dto/createUser.dto';
 import UpdateUserDto from './dto/updateUser.dto';
 
 @Controller('users')
-export default class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+export default class UserController {
+  constructor(private readonly userService: UserService) { }
 
   @Get()
   getAllUsers() {
-    return this.usersService.getAllUsers();
+    return this.userService.getAllUsers();
   }
 
   @Get(':id')
   getUserById(@Param() { id }: FindOneParams) {
-    return this.usersService.getById(id);
+    return this.userService.getById(id);
   }
 
   @Post()
   @UseGuards(JwtAuthenticationGuard)
   async createUser(@Body() user: CreateUserDto) {
-    return this.usersService.create(user);
+    return this.userService.create(user);
   }
 
   @Put(':id')
@@ -42,11 +42,11 @@ export default class UsersController {
     @Param() { id }: FindOneParams,
     @Body() user: UpdateUserDto,
   ) {
-    return this.usersService.updateUser(id, user);
+    return this.userService.updateUser(id, user);
   }
 
   @Delete(':id')
   async deleteUser(@Param() { id }: FindOneParams) {
-    return this.usersService.deleteUser(id);
+    return this.userService.deleteUser(id);
   }
 }

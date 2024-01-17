@@ -6,7 +6,6 @@ import {
   IsUUID,
   MinLength,
 } from 'class-validator';
-import { Gender, Roles } from '../user.type';
 
 export class UpdateUserDto {
   @IsString()
@@ -24,19 +23,8 @@ export class UpdateUserDto {
 
   @IsString()
   @IsOptional()
-  role: Roles;
-
-  @IsString()
-  @IsOptional()
-  gender: Gender;
-
-  @IsString()
-  @IsOptional()
   address: string;
 
-  @IsUUID()
-  @IsOptional()
-  branchId: string;
 }
 
 export default UpdateUserDto;

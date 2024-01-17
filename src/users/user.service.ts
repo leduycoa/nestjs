@@ -1,18 +1,15 @@
-import { Roles } from './user.type';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import User from './entities/user.entity';
 import CreateUserDto from './dto/createUser.dto';
 import UpdateUserDto from './dto/updateUser.dto';
-import BranchService from 'src/branch/branch.sevice';
 
 @Injectable()
-export default class UsersService {
+export default class UserService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    private readonly branchServices: BranchService,
   ) {}
 
   async getByEmail(email: string) {
@@ -32,14 +29,6 @@ export default class UsersService {
 
   async create(userData: CreateUserDto) {
     try {
-      const existBranch = await this.branchServices.getBranchById(
-        userData.branchId,
-      );
-      if (!existBranch.length)
-        throw new HttpException(
-          `Not found branch with id ${userData.branchId}`,
-          HttpStatus.BAD_REQUEST,
-        );
       const existEmail = await this.checkEmailExist(userData.email);
       if (existEmail)
         throw new HttpException('This Email is exist!', HttpStatus.BAD_REQUEST);
@@ -85,25 +74,10 @@ export default class UsersService {
 
   async updateUser(id: string, updateBody: UpdateUserDto) {
     try {
-      const existBranch = await this.branchServices.getBranchById(
-        updateBody.branchId,
-      );
-      if (!existBranch.length)
-        throw new HttpException(
-          `Not found branch with id ${updateBody.branchId}`,
-          HttpStatus.NOT_FOUND,
-        );
       await this.getById(id);
       return this.usersRepository.save({ id, ...updateBody });
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }
   }
-
-  // async requestSupportPc(userId: string) {
-  //   const currentUser = await this.usersRepository.findOne({
-  //     where: { id: userId },
-  //   });
-  //   if (currentUser.role === Roles. )
-  // }
 }

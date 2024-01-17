@@ -1,22 +1,17 @@
 
 import { Module } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
-import { UsersModule } from '../users/users.module';
+import { UserModule } from '../users/user.module';
 import { AuthenticationController } from './authentication.controller';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from '../authentication/strategies/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { config } from 'dotenv';
-import { BranchModule } from 'src/branch/branch.module';
-
-config();
  
 @Module({
   imports: [
-    BranchModule,
-    UsersModule,
+    UserModule,
     PassportModule,
     ConfigModule,
     JwtModule.registerAsync({

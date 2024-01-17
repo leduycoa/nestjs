@@ -1,19 +1,15 @@
 import { Module } from '@nestjs/common';
-import { PostsModule } from './posts/posts.module';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from '@hapi/joi';
 import DatabaseModule from './database/database.module';
 import { ExceptionsLoggerFilter } from './utils/exceptionsLogger.filter';
 import { APP_FILTER } from '@nestjs/core';
-import {AuthenticationModule} from './authentication/authentication.module'
-import { UsersModule } from './users/users.module';
-import { BranchModule } from './branch/branch.module';
-import { PcsModule } from './pcs/pcs.module';
-import { PcUsageModule } from './pcUsage/pcUsage.module';
+import { AuthenticationModule } from './authentication/authentication.module';
+import { UserModule } from './users/user.module';
+import { ClientModule } from './clients/client.module';
+import { ContractModule } from './contracts/contract.module';
 @Module({
   imports: [
-    PostsModule, 
-    AuthenticationModule,
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         POSTGRES_HOST: Joi.string().required(),
@@ -26,11 +22,11 @@ import { PcUsageModule } from './pcUsage/pcUsage.module';
         JWT_EXPIRATION_TIME: Joi.string().required(),
       }),
     }),
+    AuthenticationModule,
     DatabaseModule,
-    UsersModule,
-    BranchModule,
-    PcsModule,
-    PcUsageModule
+    UserModule,
+    ClientModule,
+    ContractModule
   ],
   controllers: [],
   providers: [
